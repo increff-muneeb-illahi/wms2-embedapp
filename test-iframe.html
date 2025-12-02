@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Viewer - Iframe Test</title>
+    <style>
+
+
+
+        .iframe-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        iframe {
+            width: 100%;
+            min-height: 600px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="iframe-container">
+        <iframe 
+            src="http://localhost:3001?tenant=olap_poc&table=auditsnew&limit=50"
+            title="Audit Log Viewer"
+            loading="lazy">
+        </iframe>
+    </div>
+</body>
+</html>
+
