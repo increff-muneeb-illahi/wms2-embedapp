@@ -1,4 +1,4 @@
-import { Audit } from "@/types/audit";
+import { Audit, ProductivityReportItem, ProductivityReportParams } from "@/types/audit";
 import { API_BASE_URL } from "./config";
 
 export interface FetchAuditsParams {
@@ -23,9 +23,9 @@ export async function fetchAudits(params: FetchAuditsParams): Promise<Audit[]> {
   
   // Extract auth params from URL query string (if present)
   let authParams = {
-    authUsername: "",
-    authPassword: "",
-    authDomainName: "",
+    authUsername: "wms2-int2",
+    authPassword: "xmb!I0WjNb",
+    authDomainName: "increff",
   };
 
   if (typeof window !== 'undefined') {
@@ -58,8 +58,60 @@ export async function fetchAudits(params: FetchAuditsParams): Promise<Audit[]> {
     cache: "no-store",
   });
 
+  console.log(response);
+
   if (!response.ok) {
     throw new Error(`Failed to fetch audits: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Fetch productivity report from the backend
+ */
+export async function fetchProductivityReport(params: ProductivityReportParams): Promise<ProductivityReportItem[]> {
+  const queryParams = new URLSearchParams();
+  
+  // Extract auth params from URL query string (if present)
+  let authParams = {
+    authUsername: "wms2-int2",
+    authPassword: "xmb!I0WjNb",
+    authDomainName: "increff",
+  };
+
+  if (typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    authParams = {
+      authUsername: urlParams.get('authUsername') || "",
+      authPassword: urlParams.get('authPassword') || "",
+      authDomainName: urlParams.get('authDomainName') || "",
+    };
+  }
+
+  // Add all params to query string
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      queryParams.append(key, value.toString());
+    }
+  });
+
+  const url = `${API_BASE_URL}/api/audit/productivity-report?${queryParams.toString()}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "authUsername": authParams.authUsername,
+      "authPassword": authParams.authPassword,
+      "authDomainName": authParams.authDomainName,
+      "accept": "*/*",
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch productivity report: ${response.statusText}`);
   }
 
   return response.json();

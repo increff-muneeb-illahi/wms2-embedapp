@@ -24,7 +24,6 @@ export function AuditTable({ audits }: AuditTableProps) {
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-        second: "2-digit",
       });
     } catch {
       return timestamp;
@@ -40,31 +39,51 @@ export function AuditTable({ audits }: AuditTableProps) {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[180px]">Timestamp</TableHead>
-            <TableHead>Actor</TableHead>
-            <TableHead>Action</TableHead>
-            <TableHead>Event Type</TableHead>
-            <TableHead>Object Type</TableHead>
-            <TableHead>Object ID</TableHead>
-            <TableHead className="min-w-[200px]">Description</TableHead>
+            <TableHead className="min-w-[80px]">Event ID</TableHead>
+            <TableHead className="min-w-[180px]">Event Time</TableHead>
+            <TableHead className="min-w-[300px]">Description</TableHead>
+            <TableHead className="min-w-[150px]">User</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {audits.map((audit, index) => (
             <TableRow key={index}>
-              <TableCell className="font-mono text-sm">
+              <TableCell className="font-mono text-sm">{audit.id || "-"}</TableCell>
+              <TableCell className="font-mono text-sm whitespace-nowrap">
                 {formatTimestamp(audit.timestamp)}
               </TableCell>
-              <TableCell>{audit.actor || "-"}</TableCell>
-              <TableCell>{audit.action || "-"}</TableCell>
-              <TableCell className="font-medium">{audit.eventType || "-"}</TableCell>
-              <TableCell>{audit.objectType || "-"}</TableCell>
-              <TableCell className="font-mono text-sm">{audit.objectId || "-"}</TableCell>
-              <TableCell>{audit.description || "-"}</TableCell>
+              <TableCell>
+                <div className="flex flex-col gap-2">
+                  <div className="text-sm">{audit.description || "-"}</div>
+                  {audit.action && (
+                    <div className="text-sm text-muted-foreground">{audit.action}</div>
+                  )}
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {audit.objectType && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-muted text-muted-foreground">
+                        {audit.objectType}
+                      </span>
+                    )}
+                    {audit.eventType && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-muted text-muted-foreground">
+                        {audit.eventType}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-col">
+                  <span className="text-sm">{audit.actor || "-"}</span>
+                  {audit.actorEmail && (
+                    <span className="text-xs text-muted-foreground">{audit.actorEmail}</span>
+                  )}
+                </div>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
