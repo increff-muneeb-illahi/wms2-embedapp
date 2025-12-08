@@ -1,15 +1,15 @@
 'use client';
 
 import { useSearchParams } from "next/navigation";
-import { ProductivityChart } from "@/components/ProductivityChart";
+import { ActivityChart } from "@/components/ActivityChart";
 
-export default function ProductivityPage() {
+export default function ActivityPage() {
   const searchParams = useSearchParams();
 
   // Extract query parameters
   const tenant = searchParams.get('tenant');
   const table = searchParams.get('table');
-  const actor = searchParams.get('actor') || undefined;
+  const actor = searchParams.get('actor') || undefined;   
 
   // Show error for missing params
   if (!tenant || !table) {
@@ -29,7 +29,7 @@ export default function ProductivityPage() {
   }
 
   return (
-    <ProductivityChart tenant={tenant} table={table} actor={actor} />
+    <ActivityChart tenant={tenant} table={table} actor={actor} />
   );
 }
 

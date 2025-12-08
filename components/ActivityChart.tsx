@@ -10,36 +10,38 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { fetchProductivityReport } from "@/lib/api";
-import { ProductivityReportParams } from "@/types/audit";
+import { fetchActivityReport } from "@/lib/api";
+import { ActivityReportParams } from "@/types/audit";
 
-interface ProductivityChartProps {
+interface ActivityChartProps {
   tenant: string;
   table: string;
   actor?: string;
+  timestampFrom?: string; 
+  timestampTo?: string;
 }
 
-interface DayData {
+interface ActivityDataItem {
   date: string;
   dateLabel: string;
   dateTimeLabel: string;
   eventCount: number;
 }
 
-export function ProductivityChart({ tenant, table, actor }: ProductivityChartProps) {
-  const [dayData, setDayData] = useState<DayData[]>([]);
+export function ActivityChart({ tenant, table, actor }: ActivityChartProps) {
+  const [activityData, setActivityData] = useState<ActivityDataItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadProductivityData() {
+    async function loadActivityData() {
       try {
         setLoading(true);
         setError(null);
 
         // Get dates for the last 7 days
         const dates: Date[] = [];
-        for (let i = 6; i >= 0; i--) {
+        for (let i = 20; i >= 0; i--) {
           const date = new Date();
           date.setDate(date.getDate() - i);
           date.setHours(0, 0, 0, 0);
@@ -47,11 +49,11 @@ export function ProductivityChart({ tenant, table, actor }: ProductivityChartPro
         }
 
         // Fetch data for each day
-        const dayDataPromises = dates.map(async (date) => {
+        const activityDataPromises = dates.map(async (date) => {
           const nextDay = new Date(date);
           nextDay.setDate(nextDay.getDate() + 1);
 
-          const params: ProductivityReportParams = {
+          const params: ActivityReportParams = {
             tenant,
             table,
             actor,
@@ -60,7 +62,7 @@ export function ProductivityChart({ tenant, table, actor }: ProductivityChartPro
             limit: 1000, // Get all records for the day
           };
 
-          const reportData = await fetchProductivityReport(params);
+          const reportData = await fetchActivityReport(params);
           
           // Sum up all eventCounts for this day
           const totalCount = reportData.reduce((sum, item) => sum + (item.eventCount || 0), 0);
@@ -85,10 +87,10 @@ export function ProductivityChart({ tenant, table, actor }: ProductivityChartPro
           };
         });
 
-        const results = await Promise.all(dayDataPromises);
-        setDayData(results);
+        const results = await Promise.all(activityDataPromises);
+        setActivityData(results);
       } catch (err) {
-        console.error("Error fetching productivity data:", err);
+        console.error("Error fetching activity data:", err);
         let errorMessage = "An unknown error occurred";
         if (err instanceof Error) {
           errorMessage = err.message;
@@ -102,7 +104,7 @@ export function ProductivityChart({ tenant, table, actor }: ProductivityChartPro
     }
 
     if (tenant && table) {
-      loadProductivityData();
+      loadActivityData();
     }
   }, [tenant, table, actor]);
 
@@ -111,7 +113,7 @@ export function ProductivityChart({ tenant, table, actor }: ProductivityChartPro
       <div className="w-screen h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-2"></div>
-          <p className="text-gray-600 text-sm">Loading productivity data...</p>
+          <p className="text-gray-600 text-sm">Loading activity data...</p>
         </div>
       </div>
     );
@@ -121,7 +123,7 @@ export function ProductivityChart({ tenant, table, actor }: ProductivityChartPro
     return (
       <div className="w-screen h-screen flex items-center justify-center">
         <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
-          <p className="font-semibold">Error Loading Data</p>
+          <p className="font-semibold">Error Loading Activity Data</p>
           <p className="text-sm mt-1">{error}</p>
         </div>
       </div>
@@ -129,12 +131,12 @@ export function ProductivityChart({ tenant, table, actor }: ProductivityChartPro
   }
 
   // Format data for recharts
-  const chartData = dayData.map((day) => ({
-    date: day.dateTimeLabel,
-    eventCount: day.eventCount,
+  const chartData = activityData.map((activity) => ({
+    date: activity.dateTimeLabel,
+    eventCount: activity.eventCount,
   }));
 
-  const maxCount = Math.max(...dayData.map(d => d.eventCount), 1);
+  const maxCount = Math.max(...activityData.map(activity => activity.eventCount), 1);
   const yAxisDomain = [0, Math.max(maxCount * 1.1, 10)]; // Add 10% padding, minimum 10
 
   // Calculate Y-axis ticks
@@ -144,7 +146,7 @@ export function ProductivityChart({ tenant, table, actor }: ProductivityChartPro
 
   return (
     <div className="w-screen h-screen">
-      {dayData.every(d => d.eventCount === 0) ? (
+        {activityData.every(activity => activity.eventCount === 0) ? (
         <div className="w-screen h-screen flex items-center justify-center text-gray-500">
           No activity found in the last 7 days
         </div>
@@ -157,14 +159,12 @@ export function ProductivityChart({ tenant, table, actor }: ProductivityChartPro
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis
               dataKey="date"
-              angle={-45}
-              textAnchor="end"
-              height={80}
-              tick={{ fill: "#6b7280", fontSize: 12 }}
-              interval={0}
+              tick={false}
+              tickLine={{ stroke: "#6b7280", strokeWidth: 1 }}
+              axisLine={{ stroke: "#e5e7eb" }}
             />
             <YAxis
-              label={{ value: "eventCount", angle: -90, position: "insideLeft", fill: "#6b7280" }}
+              label={{ value: "actions performed", angle: -90, position: "insideLeft", fill: "#6b7280" }}
               tick={{ fill: "#6b7280", fontSize: 12 }}
               domain={yAxisDomain}
               ticks={yAxisTicks}

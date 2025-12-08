@@ -10,7 +10,7 @@ export interface Audit {
   id: string;
 }
 
-export interface ProductivityReportItem {
+export interface ActivityReportItem {
   primaryObjectId?: string;
   primaryObjectType?: string;
   eventType?: string;
@@ -18,7 +18,7 @@ export interface ProductivityReportItem {
   [key: string]: any; // For any additional fields
 }
 
-export interface ProductivityReportParams {
+export interface ActivityReportParams {
   tenant: string;
   table: string;
   actor?: string;
@@ -27,4 +27,3 @@ export interface ProductivityReportParams {
   limit?: number;
   offset?: number;
 }
-

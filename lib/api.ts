@@ -1,11 +1,11 @@
-import { Audit, ProductivityReportItem, ProductivityReportParams } from "@/types/audit";
+import { Audit, ActivityReportItem, ActivityReportParams } from "@/types/audit";
 import { API_BASE_URL } from "./config";
 
 export interface FetchAuditsParams {
   tenant: string;
   table: string;
-  primaryObjectId?: string;
-  primaryObjectType?: string;
+  objectId?: string;
+  objectType?: string;
   actor?: string;
   eventType?: string;
   action?: string;
@@ -68,9 +68,9 @@ export async function fetchAudits(params: FetchAuditsParams): Promise<Audit[]> {
 }
 
 /**
- * Fetch productivity report from the backend
+ * Fetch activity report from the backend
  */
-export async function fetchProductivityReport(params: ProductivityReportParams): Promise<ProductivityReportItem[]> {
+export async function fetchActivityReport(params: ActivityReportParams): Promise<ActivityReportItem[]> {
   const queryParams = new URLSearchParams();
   
   // Extract auth params from URL query string (if present)
@@ -111,7 +111,7 @@ export async function fetchProductivityReport(params: ProductivityReportParams):
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch productivity report: ${response.statusText}`);
+    throw new Error(`Failed to fetch activity report: ${response.statusText}`);
   }
 
   return response.json();

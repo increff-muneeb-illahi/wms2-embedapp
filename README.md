@@ -58,8 +58,8 @@ The application requires the following query parameters:
 - `table` - Table name (e.g., "audits")
 
 **Optional:**
-- `primaryObjectId` - Filter by primary object ID
-- `primaryObjectType` - Filter by primary object type
+- `objectId` - Filter by primary object ID
+- `objectType` - Filter by primary object type
 - `actor` - Filter by actor
 - `eventType` - Filter by event type
 - `action` - Filter by action

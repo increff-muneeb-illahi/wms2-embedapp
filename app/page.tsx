@@ -15,8 +15,8 @@ export default function Home() {
   // Extract query parameters
   const tenant = searchParams.get('tenant');
   const table = searchParams.get('table');
-  const primaryObjectId = searchParams.get('primaryObjectId') || undefined;
-  const primaryObjectType = searchParams.get('primaryObjectType') || undefined;
+  const objectId = searchParams.get('objectId') || undefined;
+  const objectType = searchParams.get('objectType') || undefined;
   const actor = searchParams.get('actor') || undefined;
   const eventType = searchParams.get('eventType') || undefined;
   const action = searchParams.get('action') || undefined;
@@ -41,8 +41,8 @@ export default function Home() {
         const data = await fetchAudits({
           tenant,
           table,
-          primaryObjectId,
-          primaryObjectType,
+          objectId,
+          objectType,
           actor,
           eventType,
           action,
@@ -70,7 +70,7 @@ export default function Home() {
     }
 
     loadAudits();
-  }, [tenant, table, primaryObjectId, primaryObjectType, actor, eventType, action, timestampFrom, timestampTo, limit, offset]);
+  }, [tenant, table, objectId, objectType, actor, eventType, action, timestampFrom, timestampTo, limit, offset]);
 
   // Show error for missing params
   if (!tenant || !table) {
