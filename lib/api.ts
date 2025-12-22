@@ -20,24 +20,8 @@ export interface FetchAuditsParams {
  */
 export async function fetchAudits(params: FetchAuditsParams): Promise<Audit[]> {
   const queryParams = new URLSearchParams();
-  
-  // Extract auth params from URL query string (if present)
-  let authParams = {
-    authUsername: "wms2-int2",
-    authPassword: "xmb!I0WjNb",
-    authDomainName: "increff",
-  };
 
-  if (typeof window !== 'undefined') {
-    const urlParams = new URLSearchParams(window.location.search);
-    authParams = {
-      authUsername: urlParams.get('authUsername') || "",
-      authPassword: urlParams.get('authPassword') || "",
-      authDomainName: urlParams.get('authDomainName') || "",
-    };
-  }
-
-  // Add all params to query string (auth params are filtered out - they go in headers)
+  // Add all params to query string
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") {
       queryParams.append(key, value.toString());
@@ -50,11 +34,9 @@ export async function fetchAudits(params: FetchAuditsParams): Promise<Audit[]> {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "authUsername": authParams.authUsername,
-      "authPassword": authParams.authPassword,
-      "authDomainName": authParams.authDomainName,
       "accept": "*/*",
     },
+    credentials: "include",
     cache: "no-store",
   });
 
@@ -72,22 +54,6 @@ export async function fetchAudits(params: FetchAuditsParams): Promise<Audit[]> {
  */
 export async function fetchActivityReport(params: ActivityReportParams): Promise<ActivityReportItem[]> {
   const queryParams = new URLSearchParams();
-  
-  // Extract auth params from URL query string (if present)
-  let authParams = {
-    authUsername: "wms2-int2",
-    authPassword: "xmb!I0WjNb",
-    authDomainName: "increff",
-  };
-
-  if (typeof window !== 'undefined') {
-    const urlParams = new URLSearchParams(window.location.search);
-    authParams = {
-      authUsername: urlParams.get('authUsername') || "",
-      authPassword: urlParams.get('authPassword') || "",
-      authDomainName: urlParams.get('authDomainName') || "",
-    };
-  }
 
   // Add all params to query string
   Object.entries(params).forEach(([key, value]) => {
@@ -102,11 +68,9 @@ export async function fetchActivityReport(params: ActivityReportParams): Promise
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "authUsername": authParams.authUsername,
-      "authPassword": authParams.authPassword,
-      "authDomainName": authParams.authDomainName,
       "accept": "*/*",
     },
+    credentials: "include",
     cache: "no-store",
   });
 
