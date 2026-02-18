@@ -1,0 +1,24 @@
+build_env: npm           # or mvn, python, etc.
+version_source: package.json     # package.json | pom.xml | VERSION
+
+registries:
+  dev:
+    registry: asia-south1-docker.pkg.dev
+    project: saas-dev-314407
+    repo: omni
+  prod:
+    registry: asia-south1-docker.pkg.dev
+    project: assure-prod-3
+    repo: omni
+
+images:
+  - name: embed-app
+    context: .
+    dockerfile: Dockerfile
+    target: runner
+    build_args: {}
+    env:
+      dev:
+        build_args: {}
+      prod: {}
+
